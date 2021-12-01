@@ -33,77 +33,77 @@ const render = () => {
   }
   sortTasks();
   allTasks.map((item, index) => {
-    const container = document.createElement('div');
-    container.id = `task-${index}`;
-    container.className = 'task-container';
-    const checkbox = document.createElement('input');
-    checkbox.type = 'checkbox';
+  const container = document.createElement('div');
+  container.id = `task-${index}`;
+  container.className = 'task-container';
+  const checkbox = document.createElement('input');
+  checkbox.type = 'checkbox';
 
-    const {words, isCheck} = item;
+  const {words, isCheck} = item;
 
-    checkbox.checked = isCheck;
-    checkbox.onchange = () => {
-        onChangeCheckbox(index);
-    }
-    container.appendChild(checkbox);
+  checkbox.checked = isCheck;
+  checkbox.onchange = () => {
+    onChangeCheckbox(index);
+  }
+  container.appendChild(checkbox);
 
-    const text = document.createElement('p');
-    text.innerText = item.text;
-    text.className = isCheck ? 'text-task done-text' : 'text-task'
-    container.appendChild(text);
+  const text = document.createElement('p');
+  text.innerText = item.text;
+  text.className = isCheck ? 'text-task done-text' : 'text-task'
+  container.appendChild(text);
 
-    // Create input for editing task.
-    const inputEdit = document.createElement('input');
-    inputEdit.className = 'hide';
-    container.appendChild(inputEdit);
+  // Create input for editing task.
+  const inputEdit = document.createElement('input');
+  inputEdit.className = 'hide';
+  container.appendChild(inputEdit);
 
-    // Create button for save edited task.
-    const buttonSave = document.createElement('button');
-    buttonSave.innerText = 'Сохранить';
-    buttonSave.className = 'button-style';
-    buttonSave.className = 'hide';
-    container.appendChild(buttonSave);
+  // Create button for save edited task.
+  const buttonSave = document.createElement('button');
+  buttonSave.innerText = 'Сохранить';
+  buttonSave.className = 'button-style';
+  buttonSave.className = 'hide';
+  container.appendChild(buttonSave);
 
-    // Create button for cancellation editing.
-    const buttonCancel = document.createElement('button');
-    buttonCancel.innerText = 'Отмена';
-    buttonCancel.className = 'button-cancel';
-    buttonCancel.className = 'hide';
-    container.appendChild(buttonCancel);
+  // Create button for cancellation editing.
+  const buttonCancel = document.createElement('button');
+  buttonCancel.innerText = 'Отмена';
+  buttonCancel.className = 'button-cancel';
+  buttonCancel.className = 'hide';
+  container.appendChild(buttonCancel);
 
-    // Create icon for editing task.
-    const imageEdit = document.createElement('img');
-    imageEdit.src = 'images/pancel.png';
-    imageEdit.className = 'img';
-    imageEdit.className = item.isCheck ? 'hide' : 'img';
-    container.appendChild(imageEdit);
+  // Create icon for editing task.
+  const imageEdit = document.createElement('img');
+  imageEdit.src = 'images/pancel.png';
+  imageEdit.className = 'img';
+  imageEdit.className = item.isCheck ? 'hide' : 'img';
+  container.appendChild(imageEdit);
 
-    // Create icon for delete task.
-    const imageDelete = document.createElement('img');
-    imageDelete.src = 'images/delete.png';
-    imageDelete.className = 'img';
-    container.appendChild(imageDelete);
-    content.appendChild(container);
+  // Create icon for delete task.
+  const imageDelete = document.createElement('img');
+  imageDelete.src = 'images/delete.png';
+  imageDelete.className = 'img';
+  container.appendChild(imageDelete);
+  content.appendChild(container);
 
-    // Launch function for save edited task.
-    buttonSave.onclick = () => {
-      saveTask(inputEdit.value, index);
-    }
+  // Launch function for save edited task.
+  buttonSave.onclick = () => {
+    saveTask(inputEdit.value, index);
+  }
 
-    // Launch function for cancellation editing.
-    buttonCancel.onclick = () => {
-      cancelChange(checkbox, imageEdit, imageDelete, inputEdit, buttonSave, buttonCancel)
-    }
+  // Launch function for cancellation editing.
+  buttonCancel.onclick = () => {
+    cancelChange(checkbox, imageEdit, imageDelete, inputEdit, buttonSave, buttonCancel)
+  }
 
-    // Launch function a click, for editing task.
-    imageEdit.onclick = () => {
-      changeText(checkbox, item.text, imageEdit, imageDelete, inputEdit, buttonSave, buttonCancel);
-    }
+  // Launch function a click, for editing task.
+  imageEdit.onclick = () => {
+    changeText(checkbox, item.text, imageEdit, imageDelete, inputEdit, buttonSave, buttonCancel);
+  }
 
-    // Launch function a click, for editing task.
-    imageDelete.onclick = () => {
-      removeTask(container);
-    }
+  // Launch function a click, for editing task.
+  imageDelete.onclick = () => {
+    removeTask(container);
+  }
   });
 }
 
@@ -168,6 +168,5 @@ deleteAllTasks = () => {
 
 //Function, for hide button for delete all our tasks.
 checkAllTasks = () => allTasks.length ? deleteButton.classList.remove('hide') : deleteButton.classList.add('hide');
-
 deleteButton.addEventListener('click', deleteAllTasks);
 document.querySelector('.add-button').addEventListener('click', onClickButton);
