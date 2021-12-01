@@ -12,7 +12,7 @@ window.onload = () => {
 
 const onClickButton = () => {
   allTasks.push({
-    text: valueInput,
+    words: valueInput,
     isCheck: false,
   })
   localStorage.setItem('tasks', JSON.stringify(allTasks));
@@ -48,7 +48,7 @@ const render = () => {
   container.appendChild(checkbox);
 
   const text = document.createElement('p');
-  text.innerText = item.text;
+  text.innerText = words;
   text.className = isCheck ? 'text-task done-text' : 'text-task'
   container.appendChild(text);
 
@@ -75,7 +75,7 @@ const render = () => {
   const imageEdit = document.createElement('img');
   imageEdit.src = 'images/pancel.png';
   imageEdit.className = 'img';
-  imageEdit.className = item.isCheck ? 'hide' : 'img';
+  imageEdit.className = isCheck ? 'hide' : 'img';
   container.appendChild(imageEdit);
 
   // Create icon for delete task.
@@ -97,7 +97,7 @@ const render = () => {
 
   // Launch function a click, for editing task.
   imageEdit.onclick = () => {
-    changeText(checkbox, item.text, imageEdit, imageDelete, inputEdit, buttonSave, buttonCancel);
+    changeText(checkbox, words, imageEdit, imageDelete, inputEdit, buttonSave, buttonCancel);
   }
 
   // Launch function a click, for editing task.
@@ -139,7 +139,7 @@ const changeText = (check, content, image1, image2, input, buttonS, buttonC) => 
 
 // Function for save edited tasks.
 const saveTask = (value, index) => {
-  allTasks[index].text = value;
+  allTasks[index].words = value;
   localStorage.setItem('tasks', JSON.stringify(allTasks));
   render();
 }
