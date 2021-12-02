@@ -3,18 +3,36 @@ let valueInput = '';
 let input = null;
 const deleteButton = document.querySelector('.delete-all');
 
-window.onload = () => {
+window.onload = async () => {
   input = document.getElementById('add-task');
   input.addEventListener('change', updateValue);
   checkAllTasks();
+  const resp = await fetch ('http://localhost:8000/allTasks', {
+    method: 'GET'
+  });
+  const result = await resp.json();
+  allTasks = result.data;
   render();
 }
 
-const onClickButton = () => {
+const onClickButton = async () => {
   allTasks.push({
-    words: valueInput,
+    text: valueInput,
     isCheck: false,
-  })
+  });
+  const resp = await fetch ('http://localhost:8000/createTask', {
+    method: 'POST',
+    headers: {
+      'Content-type' : 'application/json;charset=utf-8',
+      'Access-Control-Allow-Origin' : '*'
+    },
+    body: JSON.stringify({
+      text: valueInput,
+      isCheck: false,
+    })
+  });
+  const result = await resp.json();
+  allTasks = result.data;
   localStorage.setItem('tasks', JSON.stringify(allTasks));
   valueInput = '';
   input.value = '';
@@ -39,7 +57,7 @@ const render = () => {
   const checkbox = document.createElement('input');
   checkbox.type = 'checkbox';
 
-  const {words, isCheck} = item;
+  const { text, isCheck } = item;
 
   checkbox.checked = isCheck;
   checkbox.onchange = () => {
@@ -47,10 +65,10 @@ const render = () => {
   }
   container.appendChild(checkbox);
 
-  const text = document.createElement('p');
-  text.innerText = words;
-  text.className = isCheck ? 'text-task done-text' : 'text-task'
-  container.appendChild(text);
+  const words = document.createElement('p');
+  words.innerText = text;
+  words.className = isCheck ? 'text-task done-text' : 'text-task'
+  container.appendChild(words);
 
   // Create input for editing task.
   const inputEdit = document.createElement('input');
@@ -87,7 +105,7 @@ const render = () => {
 
   // Launch function for save edited task.
   buttonSave.onclick = () => {
-    saveTask(inputEdit.value, index);
+    saveTask(inputEdit.value, container);
   }
 
   // Launch function for cancellation editing.
@@ -97,7 +115,7 @@ const render = () => {
 
   // Launch function a click, for editing task.
   imageEdit.onclick = () => {
-    changeText(checkbox, words, imageEdit, imageDelete, inputEdit, buttonSave, buttonCancel);
+    changeText(checkbox, text, imageEdit, imageDelete, inputEdit, buttonSave, buttonCancel);
   }
 
   // Launch function a click, for editing task.
@@ -114,10 +132,14 @@ const onChangeCheckbox = (index) => {
 }
 
 // Function for delete tasks.
-const removeTask = (collection) => {
-  allTasks = allTasks.filter((item, index) => `task-${index}` !== collection.id)
+const removeTask = async (collection) => {
+  const deleteParams = allTasks.filter((item, index) => `task-${index}` === collection.id)[0].id;
+  const resp = await fetch (`http://localhost:8000/deleteTask?id=${deleteParams}`, {
+    method: 'DELETE'
+  });
+  const result = await resp.json();
+  allTasks = result.data;
   localStorage.setItem('tasks', JSON.stringify(allTasks));
-    
   checkAllTasks();
   render();
 }
@@ -138,8 +160,22 @@ const changeText = (check, content, image1, image2, input, buttonS, buttonC) => 
 }
 
 // Function for save edited tasks.
-const saveTask = (value, index) => {
-  allTasks[index].words = value;
+const saveTask = async (value, collection) => {
+  const editId = allTasks.filter((item, index) => `task-${index}` === collection.id)[0].id;
+  const resp = await fetch ('http://localhost:8000/updateTask', {
+    method: 'PATCH',
+    headers: {
+      'Content-type' : 'application/json;charset=utf-8',
+      'Access-Control-Allow-Origin' : '*'
+    },
+    body: JSON.stringify({
+      id: editId, 
+      text: value,
+      isCheck: false,
+    })
+  });
+  const result = await resp.json();
+  allTasks = result.data;
   localStorage.setItem('tasks', JSON.stringify(allTasks));
   render();
 }
