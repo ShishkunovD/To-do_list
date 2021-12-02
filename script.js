@@ -10,7 +10,7 @@ window.onload = async () => {
   const resp = await fetch ('http://localhost:8000/allTasks', {
     method: 'GET'
   });
-  let result = await resp.json();
+  const result = await resp.json();
   allTasks = result.data;
   render();
 }
@@ -31,7 +31,7 @@ const onClickButton = async () => {
       isCheck: false,
     })
   });
-  let result = await resp.json();
+  const result = await resp.json();
   allTasks = result.data;
   localStorage.setItem('tasks', JSON.stringify(allTasks));
   valueInput = '';
@@ -57,7 +57,7 @@ const render = () => {
   const checkbox = document.createElement('input');
   checkbox.type = 'checkbox';
 
-  const {text, isCheck} = item;
+  const { text, isCheck } = item;
 
   checkbox.checked = isCheck;
   checkbox.onchange = () => {
@@ -133,13 +133,11 @@ const onChangeCheckbox = (index) => {
 
 // Function for delete tasks.
 const removeTask = async (collection) => {
-  let deleteArray = allTasks.filter((item, index) => `task-${index}` === collection.id);
-  let deleteParams = deleteArray[0].id;
-
+  const deleteParams = allTasks.filter((item, index) => `task-${index}` === collection.id)[0].id;
   const resp = await fetch (`http://localhost:8000/deleteTask?id=${deleteParams}`, {
     method: 'DELETE'
   });
-  let result = await resp.json();
+  const result = await resp.json();
   allTasks = result.data;
   localStorage.setItem('tasks', JSON.stringify(allTasks));
   checkAllTasks();
@@ -163,8 +161,7 @@ const changeText = (check, content, image1, image2, input, buttonS, buttonC) => 
 
 // Function for save edited tasks.
 const saveTask = async (value, collection) => {
-  let editArray = allTasks.filter((item, index) => `task-${index}` === collection.id);
-  editId = editArray[0].id;
+  const editId = allTasks.filter((item, index) => `task-${index}` === collection.id)[0].id;
   const resp = await fetch ('http://localhost:8000/updateTask', {
     method: 'PATCH',
     headers: {
@@ -177,7 +174,7 @@ const saveTask = async (value, collection) => {
       isCheck: false,
     })
   });
-  let result = await resp.json();
+  const result = await resp.json();
   allTasks = result.data;
   localStorage.setItem('tasks', JSON.stringify(allTasks));
   render();
