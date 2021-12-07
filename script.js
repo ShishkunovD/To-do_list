@@ -16,10 +16,6 @@ window.onload = async () => {
 }
 
 const onClickButton = async () => {
-  allTasks.push({
-    text: valueInput,
-    isCheck: false,
-  });
   const resp = await fetch ('http://localhost:8000/createTask', {
     method: 'POST',
     headers: {
@@ -32,7 +28,7 @@ const onClickButton = async () => {
     })
   });
   const result = await resp.json();
-  allTasks = result.data;
+  allTasks.push(result.data);
   localStorage.setItem('tasks', JSON.stringify(allTasks));
   valueInput = '';
   input.value = '';
@@ -52,7 +48,7 @@ const render = () => {
   sortTasks();
   allTasks.map((item, index) => {
   const container = document.createElement('div');
-  container.id = `task-${index}`;
+  container.id = index;
   container.className = 'task-container';
   const checkbox = document.createElement('input');
   checkbox.type = 'checkbox';
@@ -61,7 +57,7 @@ const render = () => {
 
   checkbox.checked = isCheck;
   checkbox.onchange = () => {
-    onChangeCheckbox(index);
+    onChangeCheckbox(index, container);
   }
   container.appendChild(checkbox);
 
@@ -125,15 +121,26 @@ const render = () => {
   });
 }
 
-const onChangeCheckbox = (index) => {
-  allTasks[index].isCheck = !allTasks[index].isCheck;
-  localStorage.setItem('tasks', JSON.stringify(allTasks));
+const onChangeCheckbox = async (index, collection) => {
+  const editId = allTasks.filter((item, index) => index === Number(collection.id))[0]._id;
+  const resp = await fetch (`http://localhost:8000/updateTask?id=${editId}`, {
+    method: 'PATCH',
+    headers: {
+      'Content-type' : 'application/json;charset=utf-8',
+      'Access-Control-Allow-Origin' : '*'
+    },
+    body: JSON.stringify({
+      isCheck: allTasks[index].isCheck = !allTasks[index].isCheck
+    })
+  });
+  const result = await resp.json();
+  allTasks = result.data;
   render();
 }
 
 // Function for delete tasks.
 const removeTask = async (collection) => {
-  const deleteParams = allTasks.filter((item, index) => `task-${index}` === collection.id)[0].id;
+  const deleteParams = allTasks.filter((item, index) => index === Number(collection.id))[0]._id;
   const resp = await fetch (`http://localhost:8000/deleteTask?id=${deleteParams}`, {
     method: 'DELETE'
   });
@@ -161,17 +168,15 @@ const changeText = (check, content, image1, image2, input, buttonS, buttonC) => 
 
 // Function for save edited tasks.
 const saveTask = async (value, collection) => {
-  const editId = allTasks.filter((item, index) => `task-${index}` === collection.id)[0].id;
-  const resp = await fetch ('http://localhost:8000/updateTask', {
+  const editId = allTasks.filter((item, index) => index === Number(collection.id))[0]._id;
+  const resp = await fetch (`http://localhost:8000/updateTask?id=${editId}`, {
     method: 'PATCH',
     headers: {
       'Content-type' : 'application/json;charset=utf-8',
       'Access-Control-Allow-Origin' : '*'
     },
     body: JSON.stringify({
-      id: editId, 
-      text: value,
-      isCheck: false,
+      text: value
     })
   });
   const result = await resp.json();
