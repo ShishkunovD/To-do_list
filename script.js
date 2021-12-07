@@ -57,7 +57,7 @@ const render = () => {
 
   checkbox.checked = isCheck;
   checkbox.onchange = () => {
-    onChangeCheckbox(index, container);
+    onChangeCheckbox(item._id, isCheck);
   }
   container.appendChild(checkbox);
 
@@ -101,7 +101,7 @@ const render = () => {
 
   // Launch function for save edited task.
   buttonSave.onclick = () => {
-    saveTask(inputEdit.value, container);
+    saveTask(inputEdit.value, item._id);
   }
 
   // Launch function for cancellation editing.
@@ -121,16 +121,15 @@ const render = () => {
   });
 }
 
-const onChangeCheckbox = async (index, collection) => {
-  const editId = allTasks.filter((item, index) => index === Number(collection.id))[0]._id;
-  const resp = await fetch (`http://localhost:8000/updateTask?id=${editId}`, {
+const onChangeCheckbox = async (id, isCheck) => {
+  const resp = await fetch (`http://localhost:8000/updateTask?id=${id}`, {
     method: 'PATCH',
     headers: {
       'Content-type' : 'application/json;charset=utf-8',
       'Access-Control-Allow-Origin' : '*'
     },
     body: JSON.stringify({
-      isCheck: allTasks[index].isCheck = !allTasks[index].isCheck
+      isCheck: !isCheck
     })
   });
   const result = await resp.json();
@@ -167,9 +166,8 @@ const changeText = (check, content, image1, image2, input, buttonS, buttonC) => 
 }
 
 // Function for save edited tasks.
-const saveTask = async (value, collection) => {
-  const editId = allTasks.filter((item, index) => index === Number(collection.id))[0]._id;
-  const resp = await fetch (`http://localhost:8000/updateTask?id=${editId}`, {
+const saveTask = async (value, id) => {
+  const resp = await fetch (`http://localhost:8000/updateTask?id=${id}`, {
     method: 'PATCH',
     headers: {
       'Content-type' : 'application/json;charset=utf-8',
